@@ -1,0 +1,163 @@
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  --bg-clr: #fff;
+  --primary-clr: #4caf50;
+  --form-text-clr: #555555;
+  --input-border-clr: #cccccc;
+  --input-select-bg-clr: #efefef;
+  --btn-bg-clr: #4caf50;
+  --result-bg-clr: #e7f3e7;
+  --result-border-clr: #d4edda;
+  --result-text-clr: #155724;
+}
+
+/*        */
+/* global */
+/*        */
+
+body {
+  font-family: "Roboto", serif;
+  font-size: 16px;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-rows: 64px 1fr 32px;
+}
+
+.container {
+  min-width: 320px;
+  max-width: 600px;
+  margin: 0 auto;
+  /* border: 1px solid red; */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/*        */
+/* global */
+/*        */
+
+/*        */
+/* header */
+/*        */
+
+.header {
+  background-color: var(--primary-clr);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header h1 {
+  color: #fff;
+  font-size: 24px;
+}
+
+/*        */
+/* header */
+/*        */
+
+/*        */
+/* main   */
+/*        */
+.main {
+  padding: 16px 20px;
+  height: 100%;
+}
+
+.number-input-container {
+  margin-bottom: 32px;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+}
+.input-field label {
+  margin-bottom: 4px;
+  color: var(--form-text-clr);
+}
+.input-field input,
+.input-field select {
+  height: 32px;
+  border: 1px solid var(--input-border-clr);
+  border-radius: 4px;
+  padding-inline: 8px;
+  font-size: 1rem;
+}
+
+.select-input-container .input-field {
+  margin-bottom: 8px;
+}
+.btn-container {
+  margin-top: 32px;
+}
+.btn-container input {
+  background-color: var(--btn-bg-clr);
+  color: #fff;
+  cursor: pointer;
+}
+
+.result-step-container {
+  margin-top: 16px;
+}
+.result-step-label {
+  text-align: center;
+}
+.step-container {
+  margin-top: 16px;
+}
+.result,
+.step-display {
+  margin-top: 8px;
+  background-color: var(--result-bg-clr);
+  border: 1px solid var(--result-border-clr);
+  padding: 8px;
+}
+
+table,
+tr,
+td,
+th {
+  border: 1px solid #bff8c0;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+}
+td,
+th {
+  padding: 8px 16px;
+}
+th {
+  background-color: #8ddba0;
+}
+th::first-letter {
+  text-transform: capitalize;
+}
+tr:nth-child(even) {
+  background-color: #d3f3df;
+}
+/*        */
+/* main   */
+/*        */
+
+/*        */
+/* footer */
+/*        */
+footer .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  height: 100%;
+  box-shadow: none;
+}
+/*        */
+/* footer */
+/*        */

@@ -4,8 +4,105 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Number Conversion</title>
+    <!-- style sheet -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <h1>Hello, World!</h1>
+    <header>
+      <div class="container header">
+        <h1>Number Converter</h1>
+      </div>
+    </header>
+    <main>
+      <section class="container main">
+        <form id="form">
+          <div class="number-input-container">
+            <div class="input-field">
+              <label for="number">Enter Number</label>
+              <input
+                type="text"
+                name="number"
+                id="number"
+                placeholder="Enter a Number"
+              />
+            </div>
+          </div>
+          <div class="select-input-container">
+            <div class="input-field">
+              <label for="from">From</label>
+              <select name="from" id="from">
+                <option value="decimal" selected>Decimal</option>
+                <option value="binary">Binary</option>
+                <option value="octal">Octal</option>
+                <option value="hexadecimal">Hexadecimal</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label for="to">To</label>
+              <select name="to" id="to">
+                <option value="decimal">Decimal</option>
+                <option value="binary" selected>Binary</option>
+                <option value="octal">Octal</option>
+                <option value="hexadecimal">Hexadecimal</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-container">
+            <div class="input-field">
+              <input type="submit" value="Convert" id="btn" />
+            </div>
+          </div>
+        </form>
+        <section class="result-step-container">
+          <div class="result-container">
+            <p class="result-step-label">Converted Number</p>
+            <div class="result">
+              <p>result: <span class="result-display"></span></p>
+            </div>
+          </div>
+          <div class="step-container">
+            <p class="result-step-label">Conversion Steps</p>
+            <div class="step-display">
+              <p>Conversion from decimal to binary:</p>
+              <!-- <p class="step-display"></p> -->
+              <!-- <table>
+                <thead>
+                  <tr>
+                    <th>Division by 2</th>
+                    <th>Quotient</th>
+                    <th>Remainder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>11 / 2</td>
+                    <td>5</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>11 / 2</td>
+                    <td>5</td>
+                    <td>1</td>
+                  </tr>
+                </tbody>
+              </table> -->
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <footer>
+      <div class="container">
+        <p>Developed by Joy Goswami</p>
+      </div>
+    </footer>
+    <script src="./script.js"></script>
   </body>
 </html>
