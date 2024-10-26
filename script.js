@@ -1,4 +1,4 @@
-const number = document.getElementById("number");
+const numberInput = document.getElementById("number");
 const fromValue = document.getElementById("from").value;
 const toValue = document.getElementById("to").value;
 const form = document.getElementById("form");
@@ -7,6 +7,10 @@ const stepDisplay = document.querySelector(".step-display");
 
 let stepDataObj = {};
 
+// validate input field
+// numberInput.addEventListener("input", (e) => {
+//   console.log(numberInput.value);
+// });
 // form sumbit
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -18,12 +22,24 @@ form.addEventListener("submit", (e) => {
     formData[key] = value;
   });
 
+  // it checks whether the result table already exist or not
+  // if exists, it deletes that table
   const table = document.querySelector("table");
   if (table) {
     table.remove();
   }
 
-  displayResult(formData.number, formData.to);
+  // it checks if the number has fraction
+  // if it has, then separates it
+  // and stores it in "integer and fraction" variables
+  // then add it the "formData" object
+  if (formData.number.includes(".")) {
+    const [integer, fraction] = formData.number.split(".");
+    formData.integer = integer;
+    formData.fraction = fraction;
+  }
+  console.log(formData);
+  displayResult(formData.integer, formData.to);
 });
 
 function displayResult(number, type) {
