@@ -143,6 +143,14 @@ th::first-letter {
 tr:nth-child(even) {
   background-color: #d3f3df;
 }
+
+.error-msg {
+  display: none;
+  font-size: 10px;
+  font-weight: 400;
+  color: red;
+  padding-left: 1px;
+}
 /*        */
 /* main   */
 /*        */

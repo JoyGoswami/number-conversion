@@ -4,13 +4,27 @@ const toValue = document.getElementById("to").value;
 const form = document.getElementById("form");
 const resultDisplay = document.querySelector(".result-display");
 const stepDisplay = document.querySelector(".step-display");
+const btn = document.getElementById("btn");
+const errorMsgEl = document.querySelector(".error-msg");
 
 let stepDataObj = {};
 
 // validate input field
-// numberInput.addEventListener("input", (e) => {
-//   console.log(numberInput.value);
-// });
+numberInput.addEventListener("input", (e) => {
+  let number = numberInput.value;
+
+  let validateDot = number.split(".");
+  if (validateDot.length >= 3) {
+    btn.disabled = true;
+    errorMsgEl.style.display = "block";
+  } else {
+    btn.disabled = false;
+    errorMsgEl.style.display = "none";
+  }
+  console.log(validateDot);
+
+  console.log(number);
+});
 // form sumbit
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -37,10 +51,24 @@ form.addEventListener("submit", (e) => {
     const [integer, fraction] = formData.number.split(".");
     formData.integer = integer;
     formData.fraction = fraction;
+  } else {
+    formData.integer = formData.number;
   }
-  console.log(formData);
   displayResult(formData.integer, formData.to);
+  // formValidation(formData);
 });
+
+// function formValidation(formData) {
+//   if (formData.number.includes(".")) {
+//     const validateDot = formData.number.split(".");
+//     console.log(validateDot);
+//     if (validateDot.length <= 2) {
+//       console.log("hi");
+//     }
+//     console.log(validateDot);
+//   }
+//   displayResult(formData.integer, formData.to);
+// }
 
 function displayResult(number, type) {
   // this function displays the converted result
