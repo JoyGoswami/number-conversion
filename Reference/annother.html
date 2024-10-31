@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Decimal to Binary Converter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      input,
+      button {
+        padding: 8px;
+        margin: 5px;
+      }
+      .steps {
+        margin-top: 20px;
+      }
+      .steps p {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Decimal to Binary Converter</h1>
+
+    <label for="decimalInput">Enter a decimal number:</label>
+    <input type="text" id="decimalInput" placeholder="e.g., 12.375" />
+    <button onclick="convertToBinary()">Convert to Binary</button>
+
+    <h3>Binary Result:</h3>
+    <p id="binaryResult"></p>
+
+    <div class="steps">
+      <h3>Conversion Steps:</h3>
+      <div id="stepsContainer"></div>
+    </div>
+
+    <script>
+      function convertToBinary() {
+        const decimalInput = document.getElementById("decimalInput").value;
+        const [integerPartStr, fractionPartStr] = decimalInput.split(".");
+
+        const stepsContainer = document.getElementById("stepsContainer");
+        stepsContainer.innerHTML = ""; // Clear previous steps
+
+        let binaryResult = "";
+
+        // Convert Integer Part
+        let integerPart = parseInt(integerPartStr);
+        const integerSteps = [];
+        let integerBinary = "";
+
+        while (integerPart > 0) {
+          const remainder = integerPart % 2;
+          integerBinary = remainder + integerBinary;
+          integerSteps.push(
+            `Divide ${integerPart} by 2, Remainder = ${remainder}, Quotient = ${Math.floor(
+              integerPart / 2
+            )}`
+          );
+          integerPart = Math.floor(integerPart / 2);
+        }
+
+        if (integerBinary === "") integerBinary = "0";
+        binaryResult += integerBinary;
+
+        // Display Integer Conversion Steps
+        stepsContainer.innerHTML += "<h4>Integer Part Conversion:</h4>";
+        integerSteps.forEach((step) => {
+          const p = document.createElement("p");
+          p.textContent = step;
+          stepsContainer.appendChild(p);
+        });
+
+        // Convert Fractional Part
+        let fractionBinary = "";
+        if (fractionPartStr) {
+          let fractionPart = parseFloat("0." + fractionPartStr);
+          const fractionSteps = [];
+          stepsContainer.innerHTML += "<h4>Fractional Part Conversion:</h4>";
+
+          for (let i = 0; i < 10 && fractionPart !== 0; i++) {
+            fractionPart *= 2;
+            const bit = Math.floor(fractionPart);
+            fractionBinary += bit;
+            fractionSteps.push(
+              `Multiply by 2: ${fractionPart.toFixed(6)}, Bit = ${bit}`
+            );
+            if (bit === 1) fractionPart -= bit;
+          }
+
+          // Display Fractional Conversion Steps
+          fractionSteps.forEach((step) => {
+            const p = document.createElement("p");
+            p.textContent = step;
+            stepsContainer.appendChild(p);
+          });
+
+          binaryResult += "." + fractionBinary;
+        }
+
+        document.getElementById("binaryResult").textContent = binaryResult;
+      }
+    </script>
+  </body>
+</html>

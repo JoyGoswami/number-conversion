@@ -9,6 +9,9 @@ const errorMsgEl = document.querySelector(".error-msg");
 
 let stepDataObj = {};
 
+// let integerStepsDataObj = {};
+// let fractionStepsDataObj = {};
+
 // validate input field
 numberInput.addEventListener("input", (e) => {
   let number = numberInput.value;
@@ -21,10 +24,8 @@ numberInput.addEventListener("input", (e) => {
     btn.disabled = false;
     errorMsgEl.style.display = "none";
   }
-  console.log(validateDot);
-
-  console.log(number);
 });
+
 // form sumbit
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -38,10 +39,26 @@ form.addEventListener("submit", (e) => {
 
   // it checks whether the result table already exist or not
   // if exists, it deletes that table
-  const table = document.querySelector("table");
-  if (table) {
-    table.remove();
+  const integerTable = document.querySelector(".integer-table");
+  const fractionTable = document.querySelector(".fraction-table");
+  const title = document.querySelector(".title");
+
+  if (integerTable) {
+    integerTable.remove();
+    integerStepsDataObj = {};
   }
+
+  if (fractionTable) {
+    fractionTable.remove();
+    fractionStepsDataObj = {};
+  }
+  if (title) {
+    title.remove();
+  }
+  // if(Object.keys(integerStepsDataObj).length > 0 || Object.keys(fractionStepsDataObj).length > 0){
+  //   integerStepsDataObj = {}
+  //   fractionStepsDataObj = {}
+  // }
 
   // it checks if the number has fraction
   // if it has, then separates it
@@ -49,70 +66,203 @@ form.addEventListener("submit", (e) => {
   // then add it the "formData" object
   if (formData.number.includes(".")) {
     const [integer, fraction] = formData.number.split(".");
+
     formData.integer = integer;
-    formData.fraction = fraction;
+    formData.fraction = `0.${fraction}`;
   } else {
     formData.integer = formData.number;
   }
-  displayResult(formData.integer, formData.to);
-  // formValidation(formData);
+
+  displayResult(formData.number, formData.from, formData.to, formData);
+  // const msg = formValidation(formData);
 });
 
-// function formValidation(formData) {
-//   if (formData.number.includes(".")) {
-//     const validateDot = formData.number.split(".");
-//     console.log(validateDot);
-//     if (validateDot.length <= 2) {
-//       console.log("hi");
-//     }
-//     console.log(validateDot);
-//   }
-//   displayResult(formData.integer, formData.to);
-// }
-
-function displayResult(number, type) {
+function displayResult(number, from, to, formData) {
   // this function displays the converted result
   // based on the submited number
-  let submitedNum = Number(number);
-  let base = checkBase(type);
 
-  resultDisplay.textContent = submitedNum.toString(base);
+  // let base = checkBase(to);
 
-  conversionSteps(submitedNum, base);
+  if (from === "decimal") {
+    let submitedNum = Number(number);
+
+    let base = checkBase(to);
+
+    if (isNaN(submitedNum)) {
+      resultDisplay.textContent = "Invalid Number";
+      resultDisplay.style.color = "red";
+    } else {
+      const convertedNumber = submitedNum.toString(base);
+
+      const [integer, fraction] = convertedNumber.split(".");
+      let fractionArr;
+      let trimFractionArr = "";
+      if (fraction) {
+        fractionArr = fraction.split("");
+        trimFractionArr = fractionArr.join("");
+
+        if (fractionArr.length > 20) {
+          trimFractionArr = fractionArr.splice(0, 20).concat("...").join("");
+        }
+      }
+
+      if (trimFractionArr !== "") {
+        resultDisplay.textContent = `${integer}.${trimFractionArr}`;
+      } else {
+        resultDisplay.textContent = integer;
+      }
+
+      resultDisplay.style.color = "black";
+      // conversionSteps(submitedNum, base);
+      fromDecimalConversionSteps(formData);
+    }
+  } else if (to === "decimal") {
+    let decimalNum = toDecimal(number, from);
+    resultDisplay.textContent = decimalNum;
+  }
 }
 
-function conversionSteps(number, base) {
-  console.log(number, base);
-  let currentNumber = number;
-  let currentNumArr = [];
-  let remainderNumArr = [];
-  let quotientNumArr = [];
+// this function convert any number to decimal number
+function toDecimal(number, from) {
+  let toDec = 0;
+  let base = checkBase(from);
+  console.log(base);
+  for (let i = 0; i < number.length; i++) {
+    const bit = number[number.length - 1 - i];
+    console.log(from);
+    if (bit !== "0") {
+      toDec += Math.pow(base, i);
+    }
+  }
+  return toDec;
+}
 
-  //   let stepDataObj = {};
+// function conversionSteps(number, base) {
+//   console.log(number, base);
+//   let currentNumber = number;
+//   let currentNumArr = [];
+//   let remainderNumArr = [];
+//   let quotientNumArr = [];
+
+//   //   let stepDataObj = {};
+
+//   while (currentNumber > 0) {
+//     currentNumArr.push(currentNumber);
+
+//     let remainder = currentNumber % base;
+//     let quotient = Math.floor(currentNumber / base);
+
+//     remainderNumArr.push(remainder);
+//     quotientNumArr.push(quotient);
+
+//     stepDataObj.division = currentNumArr;
+//     stepDataObj.quotient = quotientNumArr;
+//     stepDataObj.remainder = remainderNumArr;
+//     stepDataObj.base = base;
+
+//     currentNumber = Math.floor(currentNumber / base);
+//   }
+
+//   createTable(
+//     stepDataObj.division,
+//     stepDataObj.quotient,
+//     stepDataObj.remainder,
+//     stepDataObj
+//   );
+// }
+
+function fromDecimalConversionSteps(formData) {
+  const number = formData.integer;
+  const fraction = formData.fraction || 0;
+  const base = checkBase(formData.to);
+
+  const integerStepsDataObj = stepsOfInteger(number, base);
+  const fractionStepsDataObj = stepsOfFraction(fraction, base);
+
+  if (Number(number) !== 0) {
+    filterCreateTableEl(integerStepsDataObj, null, null);
+  }
+  if (Number(fraction) !== 0) {
+    filterCreateTableEl(null, fractionStepsDataObj, null);
+  }
+  if (Number(number) === 0 && Number(fraction) === 0) {
+    const MSG = "Not a valid number";
+    // filterCreateTableEl(null, null, MSG);
+    resultDisplay.textContent = MSG;
+    resultDisplay.style.color = "red";
+  }
+  // filterCreateTableEl();
+}
+
+function stepsOfInteger(number, base) {
+  // this function handles the integer part
+  // it shows step by step how integer is converted
+
+  let currentNumber = Number(number);
+  let currentNumberArr = [];
+  let remainderArr = [];
+  let quotientNumArr = [];
+  let integerStepsDataObj = {};
 
   while (currentNumber > 0) {
-    currentNumArr.push(currentNumber);
+    //steps of integer part
+    currentNumberArr.push(`${currentNumber} ÷ ${base}`);
 
     let remainder = currentNumber % base;
     let quotient = Math.floor(currentNumber / base);
 
-    remainderNumArr.push(remainder);
+    remainderArr.push(remainder);
     quotientNumArr.push(quotient);
 
-    stepDataObj.division = currentNumArr;
-    stepDataObj.quotient = quotientNumArr;
-    stepDataObj.remainder = remainderNumArr;
-    stepDataObj.base = base;
+    integerStepsDataObj[`Division by ${base}`] = currentNumberArr;
+    integerStepsDataObj.quotient = quotientNumArr;
+    integerStepsDataObj.remainder = remainderArr;
+    // integerStepsDataObj.base = base;
 
     currentNumber = Math.floor(currentNumber / base);
+
+    // steps of fraction part
   }
 
-  createTable(
-    stepDataObj.division,
-    stepDataObj.quotient,
-    stepDataObj.remainder,
-    stepDataObj
-  );
+  return integerStepsDataObj;
+}
+
+function stepsOfFraction(fraction, base) {
+  // this function handles the fraction part
+  // it shows step by step how fraction is converted
+
+  let currentNumber = Number(fraction);
+
+  let fractionStepsDataObj = {};
+  let currentNumberArr = [];
+  let integerArr = [];
+  let fractionArr = [];
+  let productArr = [];
+
+  while (currentNumber > 0) {
+    currentNumberArr.push(`${currentNumber} × ${base}`);
+
+    let product = currentNumber * base;
+
+    let [productInt, productFra] = product.toString().split(".");
+
+    let fraction = Number(`0.${productFra}`) || 0;
+
+    integerArr.push(productInt);
+    fractionArr.push(fraction);
+    productArr.push(product);
+
+    fractionStepsDataObj[`Multiplication by ${base}`] = currentNumberArr;
+    fractionStepsDataObj.product = productArr;
+    fractionStepsDataObj.fraction = fractionArr;
+    fractionStepsDataObj.integer = integerArr;
+
+    currentNumber = fraction;
+    if (integerArr.length > 19) {
+      currentNumber = 0;
+    }
+  }
+  return fractionStepsDataObj;
 }
 
 function checkBase(type) {
@@ -136,50 +286,144 @@ function checkBase(type) {
   return base;
 }
 
-function createTable(division, quotient, remainder, stepObj) {
-  const table = document.createElement("table");
+// function createTable(division, quotient, remainder, stepObj) {
+//   const table = document.createElement("table");
+//   const headingNameArr = Object.keys(stepObj);
+//   const base = stepObj.base;
+
+//   //   table head
+//   const tableHeader = document.createElement("thead");
+//   const headTr = document.createElement("tr");
+//   const firstHeadTh = document.createElement("th");
+//   firstHeadTh.textContent = `${headingNameArr[0]} by ${base}`;
+//   headTr.append(firstHeadTh);
+//   headingNameArr.shift();
+//   headingNameArr.pop();
+//   headingNameArr.map((name) => {
+//     const headTh = document.createElement("th");
+//     headTh.textContent = name;
+//     headTr.append(headTh);
+//   });
+//   tableHeader.append(headTr);
+//   //   table head
+
+//   //   table body
+//   const tableBody = document.createElement("tbody");
+
+//   division.map((divisions, index) => {
+//     const tr = document.createElement("tr");
+
+//     const divisionCell = document.createElement("td");
+//     divisionCell.textContent = `${division[index]} ÷ ${base}`;
+//     tr.append(divisionCell);
+
+//     const quotientCell = document.createElement("td");
+//     quotientCell.textContent = quotient[index];
+//     tr.append(quotientCell);
+
+//     const remainderCell = document.createElement("td");
+//     remainderCell.textContent = remainder[index];
+//     tr.append(remainderCell);
+
+//     tableBody.append(tr);
+//   });
+
+//   //   table body
+
+//   table.append(tableHeader, tableBody);
+//   stepDisplay.append(table);
+// }
+
+function filterCreateTableEl(integerStepsDataObj, fractionStepsDataObj, msg) {
+  if (integerStepsDataObj) {
+    createStepsTableEl(integerStepsDataObj, "integer-table");
+  }
+  if (fractionStepsDataObj) {
+    createStepsTableEl(fractionStepsDataObj, "fraction-table");
+  }
+  if (msg) {
+    console.log(msg);
+  }
+}
+
+function createStepsTableEl(stepObj, className) {
+  // array of key names, comes from stepObj
+  // used to create heading of the table
   const headingNameArr = Object.keys(stepObj);
-  const base = stepObj.base;
 
-  //   table head
-  const tableHeader = document.createElement("thead");
+  // create a table element
+  const tableEl = document.createElement("table");
+  tableEl.classList.add(className);
+
+  // if title has value then it will create a title (p)
+
+  if (headingNameArr.length === 4) {
+    const title = document.createElement("p");
+    title.classList.add("title");
+    title.textContent = "Fraction Part";
+    stepDisplay.appendChild(title);
+  }
+
+  // create table header(thead), table row(tr) in head
+  // and table head(th) => depending on object keys
+
+  const tableHead = document.createElement("thead");
   const headTr = document.createElement("tr");
-  const firstHeadTh = document.createElement("th");
-  firstHeadTh.textContent = `${headingNameArr[0]} by ${base}`;
-  headTr.append(firstHeadTh);
-  headingNameArr.shift();
-  headingNameArr.pop();
-  headingNameArr.map((name) => {
-    const headTh = document.createElement("th");
-    headTh.textContent = name;
-    headTr.append(headTh);
+  headingNameArr.map((heading) => {
+    const tableHeading = document.createElement("th");
+    tableHeading.textContent = heading;
+    tableHead.append(tableHeading);
   });
-  tableHeader.append(headTr);
-  //   table head
 
-  //   table body
+  // create table body(tbody), table row(tr) in table body
+  // and table data (td) => depending on object values
+
   const tableBody = document.createElement("tbody");
-
-  division.map((divisions, index) => {
+  stepObj[headingNameArr[0]].map((data, index) => {
     const tr = document.createElement("tr");
 
-    const divisionCell = document.createElement("td");
-    divisionCell.textContent = `${division[index]} ÷ ${base}`;
-    tr.append(divisionCell);
+    const td1 = document.createElement("td");
+    td1.textContent = stepObj[headingNameArr[0]][index];
+    tr.append(td1);
 
-    const quotientCell = document.createElement("td");
-    quotientCell.textContent = quotient[index];
-    tr.append(quotientCell);
+    const td2 = document.createElement("td");
+    td2.textContent = stepObj[headingNameArr[1]][index];
+    tr.append(td2);
 
-    const remainderCell = document.createElement("td");
-    remainderCell.textContent = remainder[index];
-    tr.append(remainderCell);
+    const td3 = document.createElement("td");
+    td3.textContent = stepObj[headingNameArr[2]][index];
+    tr.append(td3);
+
+    if (stepObj[headingNameArr[3]]) {
+      const td4 = document.createElement("td");
+      td4.textContent = stepObj[headingNameArr[3]][index];
+      tr.append(td4);
+    }
 
     tableBody.append(tr);
   });
 
-  //   table body
+  // if fraction has a large value
+  // we will calculate upto 20
+  // after that we will use (.....) to show
+  // the it has more values
+  if (stepObj[headingNameArr[3]]) {
+    if (stepObj.product.length === 20) {
+      const tr = document.createElement("tr");
 
-  table.append(tableHeader, tableBody);
-  stepDisplay.append(table);
+      const td = document.createElement("td");
+      td.setAttribute("colspan", "4");
+      td.textContent = "..............";
+      tr.append(td);
+
+      tableBody.append(tr);
+    }
+  }
+
+  // attach thead, tbody to table element
+  tableEl.append(tableHead, tableBody);
+  // attach tableEl to StepDisplay
+  stepDisplay.append(tableEl);
 }
+
+function createTableBodyEl() {}

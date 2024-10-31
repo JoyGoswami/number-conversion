@@ -151,6 +151,19 @@ tr:nth-child(even) {
   color: red;
   padding-left: 1px;
 }
+.integer-heading {
+  display: none;
+  text-align: center;
+  margin: 15px 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.title {
+  text-align: center;
+  margin: 15px 0;
+  font-size: 20px;
+  font-weight: 800;
+}
 /*        */
 /* main   */
 /*        */
